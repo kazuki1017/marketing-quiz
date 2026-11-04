@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>マーケティング選択問題</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700&family=Yomogi&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: 答案用紙 — one column of questions; choices are tappable rows, graded in red pen the moment you pick */
+:root {
+  --paper: #f6f7f4;
+  --sheet: #ffffff;
+  --ink: #1d2433;
+  --ink-soft: #5b6375;
+  --rule: #d9dde3;
+  --rule-soft: #eceef1;
+  --accent: #23407a;
+  --accent-ink: #ffffff;
+  --pen: #d23a2a;
+  --ok: #1f7a4d;
+  --ok-bg: #e7f3ec;
+  --ng-bg: #fbeceb;
+  --field: #f2f4f8;
+  --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --font-pen: "Yomogi", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
+    --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
+    --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --field: #242936;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
+  --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
+  --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --field: #242936;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body);
+  font-size: 16px; line-height: 1.8;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 28px 80px; display: flex; flex-direction: column; gap: 18px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); }
+h1 { font-family: var(--font-display); font-size: clamp(26px, 5vw, 34px); line-height: 1.3; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 20px; margin: 0; text-wrap: balance; }
+.lead, .note { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.toolbar label { font-size: 13px; color: var(--ink-soft); display: flex; gap: 6px; align-items: center; }
+select { font: 14px var(--font-body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; }
+.btn { appearance: none; font: 700 14px var(--font-body); border-radius: 8px; padding: 9px 16px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
+.btn:hover { border-color: var(--ink-soft); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper);
+  padding-block: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.score { font-family: var(--font-pen); color: var(--pen); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { font-size: 15px; }
+.progress { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.bar { flex-basis: 100%; height: 4px; background: var(--rule-soft); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); }
+.spacer { flex: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.chip.full { border-color: var(--ok); color: var(--ok); }
+
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 20px 12px; }
+.chapter { padding-top: 14px; }
+.chapter + .chapter { border-top: 2px solid var(--ink); margin-top: 10px; }
+.q { padding: 16px 0; border-bottom: 1px dashed var(--rule); display: flex; flex-direction: column; gap: 10px; }
+.chapter .q:last-child { border-bottom: 0; }
+.qhead { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 6px; align-items: start; }
+.qno { font-variant-numeric: tabular-nums; color: var(--ink-soft); font-weight: 700; }
+.qtext { min-width: 0; font-weight: 500; }
+.mark { font-family: var(--font-pen); color: var(--pen); font-size: 30px; line-height: 1; min-width: 1em; text-align: center; }
+.opts { display: grid; gap: 6px; padding-left: 2.4em; }
+.opt { appearance: none; text-align: left; display: grid; grid-template-columns: 1.6em 1fr; gap: 6px; align-items: baseline;
+  font: 15px/1.6 var(--font-body); color: var(--ink); background: var(--field); border: 1px solid transparent; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+.opt:hover:not([disabled]) { border-color: var(--ink-soft); }
+.opt .k { font-weight: 700; color: var(--ink-soft); }
+.opt[disabled] { cursor: default; }
+.opt.right { background: var(--ok-bg); border-color: var(--ok); }
+.opt.right .k { color: var(--ok); }
+.opt.picked.wrong { background: var(--ng-bg); border-color: var(--pen); }
+.opt.picked.wrong .k { color: var(--pen); }
+.opt.dim { opacity: .55; }
+.explain { margin-left: 2.4em; padding: 8px 12px; border-left: 3px solid var(--rule); background: var(--rule-soft); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; }
+.explain.ng { border-left-color: var(--pen); }
+.explain.ok { border-left-color: var(--ok); }
+.explain b { font-family: var(--font-pen); font-weight: 400; color: var(--pen); font-size: 16px; }
+.explain.ok b { color: var(--ok); }
+.done { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: 18px 20px; background: var(--sheet); border: 2px solid var(--ink); border-radius: 4px; }
+.done .big { font-family: var(--font-pen); color: var(--pen); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+.empty-note { padding: 24px 0; color: var(--ink-soft); text-align: center; }
+@media (max-width: 480px) {
+  .sheet { padding: 2px 12px 10px; }
+  .opts, .explain { padding-left: 0; margin-left: 0; }
+  .qhead { grid-template-columns: 2em 1fr auto; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar i { transition: width .25s; }
+  .mark { transition: transform .15s; }
+  .q.answered .mark { transform: rotate(-8deg); }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">火2 マーケティング　小テスト対策　第1〜5回</div>
+    <h1>マーケティング選択問題</h1>
+    <p class="lead"><a href="index.html" style="color:var(--accent)">穴埋め・論述はこちら</a>。選択肢を押すと、その場で○✕と解説が出ます。選択肢の並びは毎回入れ替わるので、位置ではなく中身で覚えられます。</p>
+  </header>
+
+  <div class="toolbar">
+    <label for="chSel">範囲
+      <select id="chSel">
+        <option value="all">第1〜5回すべて</option>
+        <option value="1">第1回 マーケティング発想法</option>
+        <option value="2">第2回 マーケティング・ミックス</option>
+        <option value="3">第3回 製品</option>
+        <option value="4">第4回 価格</option>
+        <option value="5">第5回 チャネル</option>
+        <option value="wrong">前回まちがえた問題</option>
+      </select>
+    </label>
+    <label for="shuf"><input type="checkbox" id="shuf"> 問題をシャッフル</label>
+  </div>
+
+  <div class="scorebar">
+    <div class="score" id="score">0<small> / 0</small></div>
+    <div class="progress" id="prog"></div>
+    <div class="chips" id="chips"></div>
+    <div class="spacer"></div>
+    <button class="btn" id="btnRetry" hidden>まちがえた問題だけ解き直す</button>
+    <button class="btn" id="btnReset">最初から</button>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+
+  <div id="doneBox" hidden></div>
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+(function () {
+const CHN = { 1: "第1回 マーケティング発想法", 2: "第2回 マーケティング・ミックスによる顧客創造", 3: "第3回 製品による顧客創造", 4: "第4回 価格による顧客創造", 5: "第5回 チャネルによる顧客創造" };
+
+/* o[0] が正解。表示するときに並びを入れ替える */
+const Q = [
+ {c:1,q:"ドラッカーがマーケティングの役割としたのはどれか。",o:["顧客を創造すること","顧客を満足させること","製品を効率よく売ること","市場シェアを最大にすること"],e:"ドラッカーは「顧客を創造すること」とした。授業では「顧客満足から顧客創造へ」とまとめている。"},
+ {c:1,q:"「のどが渇いた」という状態にあたるのはどれか。",o:["ニーズ","ウォンツ","ベネフィット","ブランド"],e:"ニーズは行動を起こさせる、満たされていない状態。"},
+ {c:1,q:"「スポーツドリンクを買いたい」という気持ちにあたるのはどれか。",o:["ウォンツ","ニーズ","1次的ニーズ","2次的ニーズ"],e:"ウォンツはニーズを満たす特定のものや行動。"},
+ {c:1,q:"2次的ニーズの例はどれか。",o:["仲間に認められたい","空腹を満たしたい","眠りたい","のどの渇きをいやしたい"],e:"2次的ニーズは達成・親和などの心理的・社会的なもの。ほかの3つは生理的な1次的ニーズ。"},
+ {c:1,q:"「マーケティング・マイオピア（近視眼）」を唱えたのは誰か。",o:["レビット","ドラッカー","クリステンセン","フォン・ヒッペル"],e:"レビット。製品や売り方しか見ていない企業の近視眼を指す。"},
+ {c:1,q:"「破壊的イノベーション」と結びつく人物は誰か。",o:["クリステンセン","レビット","ドラッカー","フォン・ヒッペル"],e:"クリステンセン。優良企業も他社の破壊的イノベーションに飲まれうる。"},
+ {c:1,q:"業界の発想にとらわれるリスクとして、授業で挙げられていないものはどれか。",o:["生産コストが上がる","差別化しにくい","すぐ追いつかれる","価格競争に陥る"],e:"授業で挙げたリスクは「差別化しにくい・すぐ追いつかれる・価格競争に陥る」の3つ。"},
+ {c:1,q:"消費者がお金を払う対象として、授業で強調されたのはどれか。",o:["価値","性能","機能の数","原価"],e:"性能は企業目線、価値は消費者目線。消費者は価値にお金を払い、ブランドは価値を表現する手段。"},
+ {c:1,q:"AMA（2017年）のマーケティングの定義に出てくる動詞でないものはどれか。",o:["販売する","創造する","届ける","交換する"],e:"定義は「価値あるものを、創造し、伝え、届け、交換するための活動」。製品を売る技術だけではない。"},
+
+ {c:2,q:"4Pに含まれないものはどれか。",o:["People","Product","Place","Promotion"],e:"4PはProduct・Price・Place・Promotion。"},
+ {c:2,q:"4Pのそれぞれが互いに整合していることを何というか。",o:["内的一貫性","外的一貫性","ポジショニング","セグメンテーション"],e:"内的一貫性＝4P同士。外的一貫性＝4Pと市場環境。"},
+ {c:2,q:"「高級志向の30代向けに高品質のチョコを開発し、テレビCMで高級感を訴えたが、1個50円でディスカウントストアで売った」。どう評価できるか。",o:["内的一貫性が崩れている","外的一貫性が崩れている","STPの順番が間違っている","4Pが整合しているので問題ない"],e:"製品・プロモーションは高級志向なのに、価格・流通が安売り向けで、4P同士が整合していない。"},
+ {c:2,q:"STPの正しい順番はどれか。",o:["セグメンテーション → ターゲティング → ポジショニング","ターゲティング → セグメンテーション → ポジショニング","ポジショニング → セグメンテーション → ターゲティング","セグメンテーション → ポジショニング → ターゲティング"],e:"市場を分け（S）、狙う市場を選び（T）、どんな価値で差別化するかを決める（P）。"},
+ {c:2,q:"ターゲティングで考える3つの点に含まれないものはどれか。",o:["製品の原価","自社資源","市場動向","競合他社"],e:"ターゲティングでは自社資源・市場動向・競合他社を考える。"},
+ {c:2,q:"ポジショニングで製品差別化ができないと、どうなるか。",o:["価格競争に陥る","市場が細分化される","外的一貫性が高まる","顧客創造が進む"],e:"差別化できないと、消費者は価格だけで選ぶようになる。"},
+ {c:2,q:"マーケティング・ミックスは何を実現するために行うか。",o:["目指すポジショニング","市場の細分化","生産コストの削減","流通業者の管理"],e:"4Pの政策を組み合わせ、目指すポジショニングを実現するために統合的に行う活動。"},
+ {c:2,q:"マーケティング・ミックスの見直しで顧客を創造した事例として、授業で扱われたのはどれか。",o:["キットカット","マウンテンバイク","プリンターのインク","系列店"],e:"キットカット（電子教科書のケース）。ほかは第3回・第4回・第5回の話題。"},
+ {c:2,q:"似た特徴を持つ消費者の集まりを何というか。",o:["市場セグメント","ターゲット","ポジション","チャネル"],e:"市場全体を市場セグメントに分けることがセグメンテーション。"},
+
+ {c:3,q:"従来型の新製品開発プロセスで、最初の段階はどれか。",o:["製品戦略・市場機会分析","製品アイデア創出","製品コンセプト開発","製品設計"],e:"市場機会分析 → アイデア創出 → コンセプト開発 → 製品設計 → 生産工程設計 → 市場導入 → 製品ライフサイクル管理。"},
+ {c:3,q:"自社の強み・弱みから、自社資源に合う市場を見つける方法はどれか。",o:["資源ベース・アプローチ","ポジショニング・アプローチ","ユーザーイノベーション","テストマーケット"],e:"資源ベース＝内から見る。ポジショニング・アプローチ＝外の市場環境から見る。"},
+ {c:3,q:"パイロット・ラン（試験的な動作確認）が行われるのはどの段階か。",o:["生産工程設計","製品コンセプト開発","市場導入","製品ライフサイクル管理"],e:"生産ライン・設備・作業者教育を整え、パイロット・ランを経て大量生産に入る。"},
+ {c:3,q:"「便益の束」の意味として正しいものはどれか。",o:["製品の価値は多元的で、ユーザーごとに評価する属性が違う","製品にできるだけ多くの機能を詰め込むこと","複数の製品をセットにして売ること","価格をまとめて決めること"],e:"製品の価値はユーザーのニーズと対応して実現するので、ニーズが違えば評価する属性も違う。"},
+ {c:3,q:"成熟期の製品を延命・再成長させる「3つの修正」に含まれないものはどれか。",o:["価格の固定","市場の修正","製品の修正","マーケティング・ミックスの修正"],e:"3つの修正は市場・製品・マーケティング・ミックス。成熟期の次が衰退期とは限らない。"},
+ {c:3,q:"情報の粘着性仮説の説明として正しいものはどれか。",o:["情報を移して使うコストが、イノベーションの起きる場所を決める","情報量が多い製品ほど、顧客が離れにくい","粘り強く広告を続けると、認知度が上がる","一度ついたブランドイメージは変わりにくい"],e:"フォン・ヒッペル。ニーズや利用状況の情報はユーザー側にあって動かしにくいので、ユーザーがイノベーションを起こす。"},
+ {c:3,q:"リードユーザーの条件として正しいものはどれか。",o:["重要な市場動向で大多数より先行し、解決策から高い効用を得る","その製品の購入金額が最も多い","企業の開発部門に所属している","新製品を発売日に必ず買う"],e:"①市場動向に先行 ②自分のニーズを満たす解決策から相対的に高い効用を得る、の2つ。"},
+ {c:3,q:"ユーザーイノベーションが多いとされる分野はどれか。",o:["産業財や、スポーツ・趣味の消費財","日用品","公共サービス","金融商品"],e:"使い手が強いこだわりや専門知識を持つ分野で多い。"},
+ {c:3,q:"ユーザーが価値共創に参加する誘因として、授業で挙げられたのはどれか。",o:["製品やブランドへの関与の高さや、参加経験そのものの価値","給料","昇進","罰則を避けること"],e:"誘因が社員と違うので、社員とは違うマネジメントが必要になる。"},
+
+ {c:4,q:"価格を決める3つの要素に含まれないものはどれか。",o:["消費税率","競合との関係","コスト","マーケティング戦略"],e:"3つの要素は競合との関係・コスト・マーケティング戦略。価格は企業が戦略的に「決める」もの。"},
+ {c:4,q:"オープン価格の説明として正しいものはどれか。",o:["メーカーが希望小売価格を示さず、小売が価格を決める","メーカーが希望小売価格を示す","業界団体が価格を決める","競合と同じ価格にそろえる"],e:"メーカーが目安を示すのは希望小売価格（2段階建値制）。"},
+ {c:4,q:"「プリンター本体は安く、インクは高い」はどの価格設定か。",o:["補完的価格設定","ゾーン価格設定","イメージ価格設定","定額制価格設定"],e:"本体の利幅を低くし、定期的に買う消耗品の利幅を高くする。"},
+ {c:4,q:"「観光地の自販機は、同じ飲み物でも高い」はどの価格設定か。",o:["ゾーン価格設定","補完的価格設定","威光価格","慣習価格"],e:"条件の違う場所ごとに違う価格をつける。"},
+ {c:4,q:"コストプラス法で、直接経費500円・間接経費300円・利益200円のとき価格はいくらか。",o:["1,000円","800円","700円","1,200円"],e:"500 ＋ 300 ＋ 200 ＝ 1,000円。"},
+ {c:4,q:"マークアップ法で、仕入原価800円に原価の25%の利益をのせると価格はいくらか。",o:["1,000円","1,025円","960円","825円"],e:"800 ＋ 800 × 0.25 ＝ 800 ＋ 200 ＝ 1,000円。"},
+ {c:4,q:"固定費300万円、1個あたり変動費600円、価格1,000円のとき、損益分岐点の販売数量は何個か。",o:["7,500個","5,000個","3,000個","12,500個"],e:"1個あたりの利益 1,000 − 600 ＝ 400円。3,000,000 ÷ 400 ＝ 7,500個。"},
+ {c:4,q:"「1,000円ではなく980円」にする価格設定はどれか。",o:["端数価格","慣習価格","威光価格","実勢価格"],e:"安く感じさせる。需要（消費者）志向型。"},
+ {c:4,q:"「高級時計をあえて高い価格にする」のはどれか。",o:["威光価格","端数価格","実勢価格","補完的価格設定"],e:"高いことが品質や格の印になる。需要志向型。"},
+ {c:4,q:"「業界トップ（プライスリーダー）の価格に合わせる」方法はどれか。",o:["実勢価格法","競争価格法","マークアップ法","慣習価格法"],e:"競争志向型。主に下位企業が使う。競争価格法はシェア拡大を狙う成長期の方法。"},
+ {c:4,q:"「いつも買う牛乳は200円くらい」という過去の購買経験からできる基準の価格はどれか。",o:["内的参照価格","外的参照価格","留保価格","オープン価格"],e:"内的＝過去の購買経験から。外的＝店頭表示やチラシなど購買環境から。"},
+ {c:4,q:"価格の3つの機能に含まれないものはどれか。",o:["流通の効率化","支出の痛み","品質のバロメータ","社会的プレステージ"],e:"3つの機能は支出の痛み・品質のバロメータ・社会的プレステージ。"},
+ {c:4,q:"コスト志向型の価格設定の欠点はどれか。",o:["消費者視点と競争視点が抜けている","計算がとても難しい","必ず赤字になる","一度決めると変えられない"],e:"自社のコストだけで決めるので、消費者がいくらなら買うかと、競合の価格が抜ける。"},
+
+ {c:5,q:"「マーケティング・チャネル」の説明として正しいものはどれか。",o:["あるメーカーの販売ルートとしての卸・小売業者","メーカー→卸→小売という一般的な順路","広告を出すメディアの組み合わせ","社内の営業組織"],e:"一般的な順路は「流通経路」。マーケティング・チャネルは特定のメーカーから見た販売ルート。"},
+ {c:5,q:"「倉庫で冬物を夏まで保管する」はどの流通フローか。",o:["物流","商流","情報流","チャネル管理"],e:"物流は時間・空間の分離を埋める活動（輸送・在庫）。保管は在庫。"},
+ {c:5,q:"「問屋が商品を買い取り、売れ残りのリスクを負う」はどの流通フローか。",o:["商流","物流","情報流","チャネル構築"],e:"商流は所有権を移転させる活動（所有権移転・危険負担）。"},
+ {c:5,q:"「POSデータを小売からメーカーに送る」はどの流通フローか。",o:["情報流","物流","商流","取引数節約"],e:"情報流は商流・物流を円滑に機能させるための情報伝達。"},
+ {c:5,q:"卸売業の説明として正しいものはどれか。",o:["消費者以外に販売する","消費者に販売する","製品を生産する","輸送だけを行う"],e:"卸売業＝消費者以外に販売、小売業＝消費者に販売。"},
+ {c:5,q:"流通業者の存立根拠に含まれないものはどれか。",o:["メーカーが販売データを集めやすくなる","消費の小規模分散性への対応","社会的品揃え","取引数節約の原理"],e:"販売データを集めるのは流通業者で、メーカーが集められないのはデメリットの方。"},
+ {c:5,q:"メーカー5社と消費者8人がいる。卸売業者1社が間に入ると、総取引数はどう変わるか。",o:["40回 → 13回","13回 → 40回","40回 → 8回","26回 → 13回"],e:"直接取引は 5 × 8 ＝ 40回。卸を通すと 5 ＋ 8 ＝ 13回（取引数節約の原理）。"},
+ {c:5,q:"メーカーが流通業者を使うデメリットとして、授業で挙げられたものはどれか。",o:["店頭での販売価格・販売方法をコントロールできない","全国に素早く展開できない","品揃えが少なくなる","取引数が増える"],e:"ほかに、販売データが集められない、陳列や人員を思い通りにできない、利益が流通業者に渡る。"},
+ {c:5,q:"オムニチャネルの説明として正しいものはどれか。",o:["すべてのチャネルを統合し、シームレスな買い物経験を提供する顧客戦略","販売チャネルを1つに絞る戦略","卸を通さずすべて直販にする戦略","特定の店だけで売る戦略"],e:"近藤（2018）の定義。顧客接点を多く持つことによる優位性を追求する。"},
+ {c:5,q:"「安売りを続ける店への出荷を止める」はどのパワー基盤か。",o:["制裁パワー","報酬パワー","一体感パワー","正統性パワー"],e:"協力しない流通業者への強制的措置（出荷制限、取引の縮小・断絶）。"},
+ {c:5,q:"「創業者に苦しいとき助けてもらった恩から、他メーカーに乗り換えない」はどのパワー基盤か。",o:["正統（正当）性パワー","一体感パワー","報酬パワー","情報・専門性パワー"],e:"影響される義務があると思わせる能力。一体感は共感や帰属意識（系列店など）。"},
+ {c:5,q:"「販売目標を達成した店にリベートを出す」はどのパワー基盤か。",o:["報酬パワー","制裁パワー","情報・専門性パワー","正統性パワー"],e:"目標達成に寄与した流通業者への経済的代価。チャネル管理では「モチベーション」にあたる。"},
+ {c:5,q:"チャネル・コンフリクトが起こる理由に含まれないものはどれか。",o:["取引数の節約","目的・役割の不一致","資源の差","コミュニケーションの混乱"],e:"理由は目的・役割の不一致、事実認識の不一致、資源の差、コミュニケーションの混乱、メーカーによるパワー行使。"}
+];
+
+const $ = (s) => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const KANA = ["ア", "イ", "ウ", "エ"];
+
+let answers = {};      // qi -> true/false
+let visible = [];
+let retryOnly = null;
+
+function render() {
+  const sel = $("#chSel").value;
+  const wrongPrev = new Set(store.get("mkt-mc-wrong", []));
+  let idx = Q.map((_, i) => i).filter((i) => {
+    if (retryOnly) return retryOnly.has(i);
+    if (sel === "all") return true;
+    if (sel === "wrong") return wrongPrev.has(i);
+    return String(Q[i].c) === sel;
+  });
+  const shuf = $("#shuf").checked;
+  if (shuf) idx = shuffle(idx);
+  visible = idx;
+  answers = {};
+  $("#doneBox").hidden = true;
+  const sheet = $("#sheet");
+  if (!idx.length) {
+    sheet.innerHTML = '<div class="empty-note">' + (sel === "wrong" ? "前回まちがえた問題はありません。" : "問題がありません。") + "</div>";
+    update(); return;
+  }
+  let html = "", lastC = null;
+  idx.forEach((i, n) => {
+    const q = Q[i];
+    if (!shuf && q.c !== lastC) { if (lastC !== null) html += "</div>"; html += '<div class="chapter"><h2>' + esc(CHN[q.c]) + "</h2>"; lastC = q.c; }
+    if (shuf && n === 0) html += '<div class="chapter">';
+    const order = shuffle(q.o.map((_, k) => k));
+    html += '<div class="q" id="q' + i + '"><div class="qhead"><span class="qno">' + (n + 1) + '</span><span class="qtext">' + esc(q.q) +
+      (shuf ? ' <span class="note" style="display:inline">［第' + q.c + "回］</span>" : "") + '</span><span class="mark" aria-hidden="true"></span></div><div class="opts" role="group" aria-label="選択肢">' +
+      order.map((k, j) => '<button class="opt" data-q="' + i + '" data-k="' + k + '"><span class="k">' + KANA[j] + "</span><span>" + esc(q.o[k]) + "</span></button>").join("") +
+      '</div><div class="explain" hidden></div></div>';
+  });
+  html += "</div>";
+  sheet.innerHTML = html;
+  update();
+}
+
+function pick(btn) {
+  const i = +btn.dataset.q, k = +btn.dataset.k;
+  if (i in answers) return;
+  const ok = k === 0;
+  answers[i] = ok;
+  const box = $("#q" + i);
+  box.classList.add("answered");
+  box.querySelectorAll(".opt").forEach((b) => {
+    b.disabled = true;
+    const bk = +b.dataset.k;
+    if (bk === 0) b.classList.add("right");
+    else if (b === btn) b.classList.add("picked", "wrong");
+    else b.classList.add("dim");
+  });
+  box.querySelector(".mark").textContent = ok ? "○" : "✕";
+  const ex = box.querySelector(".explain");
+  ex.className = "explain " + (ok ? "ok" : "ng");
+  ex.innerHTML = "<b>" + (ok ? "正解" : "正解は「" + esc(Q[i].o[0]) + "」") + "</b>　" + esc(Q[i].e);
+  ex.hidden = false;
+  const wrong = new Set(store.get("mkt-mc-wrong", []));
+  if (ok) wrong.delete(i); else wrong.add(i);
+  store.set("mkt-mc-wrong", [...wrong]);
+  update();
+}
+
+function update() {
+  const done = visible.filter((i) => i in answers);
+  const ok = done.filter((i) => answers[i]).length;
+  $("#score").innerHTML = ok + "<small> / " + done.length + "</small>";
+  $("#prog").textContent = "解いた問題 " + done.length + " / " + visible.length;
+  $("#barFill").style.width = (visible.length ? done.length / visible.length * 100 : 0) + "%";
+  const by = {};
+  done.forEach((i) => { const c = Q[i].c; by[c] = by[c] || [0, 0]; by[c][1]++; if (answers[i]) by[c][0]++; });
+  $("#chips").innerHTML = Object.keys(by).map((c) => '<span class="chip' + (by[c][0] === by[c][1] ? " full" : "") + '">第' + c + "回 " + by[c][0] + "/" + by[c][1] + "</span>").join("");
+  const wrongN = done.length - ok;
+  $("#btnRetry").hidden = wrongN === 0;
+  const box = $("#doneBox");
+  if (visible.length && done.length === visible.length) {
+    const pct = Math.round(ok / visible.length * 100);
+    box.innerHTML = '<div class="done"><span class="big">' + ok + ' / ' + visible.length + '</span><span>正答率 ' + pct + "%。" +
+      (wrongN ? "まちがえた" + wrongN + "問を解き直すと、記憶に残りやすくなります。" : "全問正解です。範囲を変えるか、シャッフルでもう一周してみましょう。") + "</span>" +
+      (wrongN ? '<button class="btn primary" id="btnRetry2">まちがえた問題だけ解き直す</button>' : "") + "</div>";
+    box.hidden = false;
+    const b2 = $("#btnRetry2"); if (b2) b2.addEventListener("click", retry);
+  } else box.hidden = true;
+}
+
+function retry() {
+  retryOnly = new Set(visible.filter((i) => answers[i] === false));
+  render();
+  window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+
+$("#sheet").addEventListener("click", (e) => { const b = e.target.closest(".opt"); if (b && !b.disabled) pick(b); });
+$("#btnRetry").addEventListener("click", retry);
+$("#btnReset").addEventListener("click", () => { retryOnly = null; render(); });
+$("#chSel").addEventListener("change", () => { retryOnly = null; render(); });
+$("#shuf").addEventListener("change", () => { retryOnly = null; render(); });
+
+render();
+})();
+</script>
+
+</body>
+</html>
