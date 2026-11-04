@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>マーケティング小テスト演習</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700&family=Yomogi&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: 答案用紙 — a single column answer sheet; blanks sit inline in the sentence, graded in red pen */
+:root {
+  --paper: #f6f7f4;
+  --sheet: #ffffff;
+  --ink: #1d2433;
+  --ink-soft: #5b6375;
+  --rule: #d9dde3;
+  --rule-soft: #eceef1;
+  --accent: #23407a;      /* 紺: buttons, active tab */
+  --accent-ink: #ffffff;
+  --pen: #d23a2a;         /* 赤ペン: marks */
+  --ok: #1f7a4d;
+  --ok-bg: #e7f3ec;
+  --ng-bg: #fbeceb;
+  --hl: #fff1a8;          /* 蛍光ペン */
+  --field: #f2f4f8;
+  --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --font-pen: "Yomogi", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
+    --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
+    --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --hl: #4d4520; --field: #242936;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
+  --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
+  --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --hl: #4d4520; --field: #242936;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body);
+  font-size: 16px; line-height: 1.9;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 28px 80px; display: flex; flex-direction: column; gap: 20px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); }
+h1 { font-family: var(--font-display); font-size: clamp(26px, 5vw, 34px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.lead { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
+h2 { font-family: var(--font-display); font-size: 20px; margin: 0; text-wrap: balance; }
+h3 { font-size: 15px; margin: 0; letter-spacing: .04em; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--ink); }
+.tab { appearance: none; border: 0; background: transparent; color: var(--ink-soft); font: 700 15px var(--font-body);
+  padding: 10px 18px 8px; cursor: pointer; border-radius: 6px 6px 0 0; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.tab:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.toolbar label { font-size: 13px; color: var(--ink-soft); display: flex; gap: 6px; align-items: center; }
+select { font: 14px var(--font-body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; }
+.btn { appearance: none; font: 700 14px var(--font-body); border-radius: 8px; padding: 9px 16px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
+.btn:hover { border-color: var(--ink-soft); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { padding: 4px 10px; font-size: 12px; font-weight: 500; }
+.btn[disabled] { opacity: .5; cursor: default; }
+
+.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper);
+  padding-block: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.score { font-family: var(--font-pen); color: var(--pen); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; min-width: 6em; }
+.score small { font-size: 15px; }
+.score.idle { color: var(--ink-soft); font-family: var(--font-body); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.chip.full { border-color: var(--ok); color: var(--ok); }
+.spacer { flex: 1; }
+
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 20px 14px; }
+.chapter { padding-top: 14px; }
+.chapter + .chapter { border-top: 2px solid var(--ink); margin-top: 10px; }
+.chapter h2 { padding-bottom: 6px; }
+.q { display: grid; grid-template-columns: 2.2em 1fr; gap: 0 6px; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+.q:last-child { border-bottom: 0; }
+.qno { font-variant-numeric: tabular-nums; color: var(--ink-soft); font-weight: 700; padding-top: 2px; }
+.qtext { min-width: 0; line-height: 2.5; }
+.blank { display: inline-flex; align-items: center; gap: 2px; position: relative; white-space: nowrap; margin: 0 2px; }
+.bno { font-size: 12px; color: var(--ink-soft); }
+.blank input { font: 500 15px var(--font-body); color: var(--ink); background: var(--field); border: 0; border-bottom: 2px solid var(--ink-soft);
+  border-radius: 4px 4px 0 0; padding: 2px 6px; max-width: 62vw; }
+.blank.ok input { background: var(--ok-bg); border-bottom-color: var(--ok); }
+.blank.ng input { background: var(--ng-bg); border-bottom-color: var(--pen); text-decoration: line-through; text-decoration-color: var(--pen); }
+.blank.ng.empty input { text-decoration: none; }
+.mark { font-family: var(--font-pen); color: var(--pen); font-size: 22px; line-height: 1; width: 1em; text-align: center; }
+.ref { color: var(--ink-soft); font-size: 14px; }
+.fix { font-family: var(--font-pen); color: var(--pen); font-size: 16px; white-space: normal; }
+.explain { grid-column: 2; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 1.7; }
+.ex { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 6px 10px; border-left: 3px solid var(--rule); background: var(--rule-soft); border-radius: 0 4px 4px 0; }
+.ex.ng { border-left-color: var(--pen); }
+.ex.ok { border-left-color: var(--ok); }
+.ex b { font-weight: 700; }
+.ex .why { color: var(--ink-soft); }
+
+.empty-note { padding: 24px 0; color: var(--ink-soft); text-align: center; }
+
+/* 論述 */
+.qlist { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.qcard { appearance: none; text-align: left; font: 14px/1.6 var(--font-body); color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.qcard .k { font-size: 12px; color: var(--ink-soft); }
+.qcard .star { color: var(--pen); }
+.qcard[aria-pressed="true"] { border: 2px solid var(--accent); padding: 9px 11px; }
+.prompt { font-family: var(--font-display); font-size: 18px; line-height: 1.7; margin: 0; }
+.genko { width: 100%; min-height: 280px; resize: vertical; font: 16px/2.2 var(--font-body); color: var(--ink);
+  background-color: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 14px;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(2.2em - 1px), var(--rule-soft) calc(2.2em - 1px), var(--rule-soft) 2.2em);
+  background-attachment: local; background-position: 0 6px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.kw { display: flex; flex-wrap: wrap; gap: 6px; }
+.kwi { font-size: 13px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--rule); }
+.kwi.hit { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+.kwi.miss { border-style: dashed; color: var(--ink-soft); }
+.result { display: flex; flex-direction: column; gap: 12px; }
+.grade { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.grade .big { font-family: var(--font-pen); color: var(--pen); font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.grade .verdict { font-family: var(--font-pen); color: var(--pen); font-size: 20px; }
+.result ul { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 4px; line-height: 1.7; }
+.status { font-size: 14px; color: var(--ink-soft); }
+details.model { border-top: 1px solid var(--rule); padding-top: 10px; }
+details.model summary { cursor: pointer; font-weight: 700; }
+details.model p { line-height: 1.9; margin: 10px 0 0; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.note { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .mark { transition: transform .15s; }
+  .blank.ok .mark, .blank.ng .mark { transform: rotate(-8deg); }
+}
+@media (max-width: 480px) {
+  .sheet { padding: 4px 12px 10px; }
+  .q { grid-template-columns: 1.8em 1fr; }
+  .score { font-size: 22px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">火2 マーケティング　小テスト対策　第1〜5回</div>
+    <h1>マーケティング小テスト演習</h1>
+    <p class="lead">穴埋め70か所は入力して「答え合わせ」を押すと赤ペンで採点します。論述はキーワードの確認と、Claudeによる採点ができます。</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-fill" aria-selected="true" aria-controls="view-fill">穴埋め</button>
+    <button class="tab" role="tab" id="tab-essay" aria-selected="false" aria-controls="view-essay">論述</button>
+  </div>
+
+  <section id="view-fill" class="stack" role="tabpanel" aria-labelledby="tab-fill">
+    <div class="toolbar">
+      <label for="chSel">範囲
+        <select id="chSel">
+          <option value="all">第1〜5回すべて</option>
+          <option value="1">第1回 マーケティング発想法</option>
+          <option value="2">第2回 マーケティング・ミックス</option>
+          <option value="3">第3回 製品</option>
+          <option value="4">第4回 価格</option>
+          <option value="5">第5回 チャネル</option>
+          <option value="wrong">前回まちがえた問題</option>
+        </select>
+      </label>
+      <label for="shuf"><input type="checkbox" id="shuf"> 問題をシャッフル</label>
+    </div>
+
+    <div class="scorebar">
+      <div class="score idle" id="score">未採点</div>
+      <div class="chips" id="chips"></div>
+      <div class="spacer"></div>
+      <button class="btn" id="btnRetry" hidden>まちがえた所だけ解き直す</button>
+      <button class="btn" id="btnClear">全部消す</button>
+      <button class="btn primary" id="btnCheck">答え合わせ</button>
+    </div>
+
+    <div class="sheet" id="sheet"></div>
+    <p class="note">ひらがな・カタカナ、全角・半角、「・」や空白の違いは区別しません。言い方が違うだけで合っているときは、採点後に出る「正解にする」で直せます。</p>
+  </section>
+
+  <section id="view-essay" class="stack" role="tabpanel" aria-labelledby="tab-essay" hidden>
+    <div class="qlist" id="qlist"></div>
+    <div class="sheet stack" style="padding:16px 20px">
+      <div class="eyebrow" id="eTag"></div>
+      <p class="prompt" id="ePrompt"></p>
+      <p class="note">書き方：定義 → 理由・しくみ → 具体例 → まとめ。最後を「〜によって新しい顧客を創造できる」で締めると授業の流れに沿います。</p>
+      <textarea class="genko" id="eText" placeholder="ここに答案を書きます。下書きはこのブラウザに自動で残ります。"></textarea>
+      <div class="meta"><span id="eCount">0字</span><span>目安 300〜500字</span></div>
+      <div class="toolbar">
+        <button class="btn" id="btnKw">キーワードを確認</button>
+        <button class="btn primary" id="btnAi" hidden>Claudeに採点してもらう</button>
+        <button class="btn" id="btnStop" hidden>止める</button>
+      </div>
+      <div class="stack" id="kwBox" hidden>
+        <h3>入っているキーワード <span id="kwScore" class="status"></span></h3>
+        <div class="kw" id="kwList"></div>
+      </div>
+      <div class="result" id="aiBox" hidden></div>
+      <details class="model" id="eModel">
+        <summary>解答例を見る</summary>
+        <p id="eModelText"></p>
+      </details>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+const CHN = { 1: "第1回 マーケティング発想法", 2: "第2回 マーケティング・ミックスによる顧客創造", 3: "第3回 製品による顧客創造", 4: "第4回 価格による顧客創造", 5: "第5回 チャネルによる顧客創造" };
+
+/* [[n]] = 入力欄, [[n:r]] = 同じ番号の参照（入力しない） */
+const Q = [
+ {c:1,t:"ドラッカーは、マーケティングの役割を[[1]]を創造することだとした。顧客満足から[[1:r]]創造へ。"},
+ {c:1,t:"行動を起こさせる、満たされていない状態を[[2]]といい、それを満たす特定のものや行動を[[3]]という。"},
+ {c:1,t:"[[2:r]]には、空腹や睡眠など生理的な[[4]]次的なものと、達成や親和など心理的・社会的な[[5]]次的なものがある。"},
+ {c:1,t:"どんな製品をどう売るかしか見ていない企業の近視眼を、レビットは「マーケティング・[[6]]」と呼んだ。"},
+ {c:1,t:"優良企業も、他社の[[7]]的イノベーション（クリステンセン）に飲まれうる。"},
+ {c:1,t:"事業の目標は企業目線の「[[8]]」ではなく、消費者目線の「[[9]]」である。消費者は[[9:r]]にお金を払い、[[10]]は[[9:r]]を表現する手段である。"},
+ {c:1,t:"AMA（2017年）の定義では、マーケティングは顧客、パートナー、社会にとって価値あるものを、[[11]]し、伝え、届け、[[12]]するための活動である。"},
+ {c:2,t:"製品、価格、流通、プロモーションの政策を組み合わせ、目指す[[13]]を実現するために、統合的にマーケティング活動を行うことを[[14]]という。"},
+ {c:2,t:"4Pとは、Product、Price、[[15]]、Promotionである。"},
+ {c:2,t:"4Pのそれぞれが互いに整合していることを[[16]]一貫性、4Pの組み合わせと市場環境が整合していることを[[17]]一貫性という。"},
+ {c:2,t:"STPとは、Segmentation（市場細分化）、[[18]]、Positioningである。"},
+ {c:2,t:"似た特徴を持つ消費者の集まりを市場[[19]]という。"},
+ {c:2,t:"ターゲティングでは、自社資源、市場動向、[[20]]を考える。"},
+ {c:2,t:"ポジショニングで製品差別化ができなければ[[21]]競争に陥る。"},
+ {c:2,t:"他社と差別化するには、顧客[[22]]型アプローチと顧客[[23]]型アプローチの2つがある。（順不同）"},
+ {c:3,t:"市場機会の分析には、市場環境の中で自社を位置づける[[24]]・アプローチと、自社の強み・弱みから市場を見つける[[25]]ベース・アプローチがある。"},
+ {c:3,t:"アイデアが消費者に与えるベネフィットを、消費者にとって意味のある言葉で表したものを製品[[26]]という。"},
+ {c:3,t:"大量生産の前に行う試験的な動作確認を[[27]]・ランという。"},
+ {c:3,t:"製品の価値は製品自体に内在するのではなく、ユーザーの[[28]]と対応してはじめて実現する。製品の価値は多元的であり、[[29]]の束といえる。"},
+ {c:3,t:"成熟期の次が衰退期とは限らない。市場の修正、製品の修正、[[30]]の修正で延命・再成長できる。"},
+ {c:3,t:"ユーザーを含む企業以外のステークホルダーとの協働で新しい価値をつくることを価値[[31]]という。"},
+ {c:3,t:"企業ではなくユーザーがイノベーションの担い手になることを[[32]]イノベーションという。"},
+ {c:3,t:"イノベーション関連の情報を移して使うコストが、イノベーションがどこで起きるかを説明するという考え方を、情報の[[33]]性仮説という（フォン・ヒッペル）。"},
+ {c:3,t:"重要な市場動向で大多数より先行し、自分のニーズを満たす解決策から高い効用を得るユーザーを[[34]]という。"},
+ {c:4,t:"価格を決める3つの要素は、競合との関係、[[35]]、マーケティング戦略である。"},
+ {c:4,t:"メーカーが希望小売価格を示さず、小売が価格を決める方式を[[36]]価格という。"},
+ {c:4,t:"本体の利幅を低くし、定期的に買う消耗品の利幅を高くする価格設定を[[37]]的価格設定という。"},
+ {c:4,t:"条件の違う場所ごとに違う価格をつける価格設定を[[38]]価格設定という。"},
+ {c:4,t:"直接経費＋間接経費＋利益で価格を決める方法を[[39]]法、仕入原価＋利益で決める方法を[[40]]法という。"},
+ {c:4,t:"980円のように安く感じさせる価格を[[41]]価格、長期間一定の価格を[[42]]価格、高いほど売れる価格を[[43]]価格という。"},
+ {c:4,t:"プライスリーダーの価格を基準にする方法を[[44]]価格法という。"},
+ {c:4,t:"買ってもよい上限の価格を[[45]]価格という。店頭表示など購買環境から形成される基準の価格を[[46]]参照価格、過去の購買経験から形成されるものを[[47]]参照価格という。"},
+ {c:4,t:"価格の3つの機能は、支出の痛み、品質の[[48]]、社会的[[49]]である。"},
+ {c:5,t:"あるメーカーの販売ルートとしての卸・小売業者のことを[[50]]という。"},
+ {c:5,t:"メーカーによるチャネルマネジメントは、チャネル[[51]]（選択）＋チャネル[[52]]である。"},
+ {c:5,t:"流通の機能（流通フロー）は、①[[53]] ②[[54]] ③[[55]]である。"},
+ {c:5,t:"物流は、生産者と消費者の間にある[[56]]・[[57]]にかかわる分離を埋めるための活動で、輸送と[[58]]からなる。"},
+ {c:5,t:"商流は、生産者から消費者へと[[59]]を移転させるための活動（いわゆる売買取引）で、所有権移転と[[60]]負担からなる。"},
+ {c:5,t:"卸売業は消費者[[61]]に販売し、小売業は消費者に販売する。"},
+ {c:5,t:"流通業者の存立根拠は、①消費の[[62]]性への対応 ②資金調達と[[63]]負担軽減 ③素早い展開 ④社会的[[64]] ⑤[[65]]の原理である。"},
+ {c:5,t:"「すべてのチャネルを統合し、消費者にシームレスな買い物経験を提供する顧客戦略」を[[66]]という。"},
+ {c:5,t:"チャネル管理には、報酬やリベートなどの優遇措置である[[67]]と、インセンティブの削減や商品出荷の禁止などの[[68]]がある。"},
+ {c:5,t:"5つのパワー基盤は、報酬、[[69]]、情報や専門性、[[70]]、正統（正当）性である。"}
+];
+
+/* a: 正解（表示は先頭）, e: 解説 */
+const A = {
+ 1:{a:["顧客","こきゃく"],e:"まだ満たされていないニーズを満たし、売れる理由をつくること。"},
+ 2:{a:["ニーズ"],e:"ニーズは「満たされていない状態」。のどの渇きはニーズ。"},
+ 3:{a:["ウォンツ"],e:"ウォンツは「ニーズを満たす特定のもの」。スポーツドリンクはウォンツ。"},
+ 4:{a:["1","一","いち"],e:"1次的＝空腹・睡眠などの生理的なもの。"},
+ 5:{a:["2","二","に"],e:"2次的＝達成・親和などの心理的・社会的なもの。"},
+ 6:{a:["マイオピア","近視眼"],e:"近視眼という意味。避けると技術変化に対応でき、独自のビジネスをつくれる。"},
+ 7:{a:["破壊","はかい"],e:"既存の優良企業が、他社の新しい技術に敗れる現象。"},
+ 8:{a:["性能","せいのう"],e:"性能は企業目線。"},
+ 9:{a:["価値","かち"],e:"価値は消費者目線。消費者がお金を払うのは価値。"},
+ 10:{a:["ブランド"],e:"ブランドは価値を表現する手段。"},
+ 11:{a:["創造","そうぞう"],e:"4つの動詞「創造し、伝え、届け、交換する」をセットで覚える。"},
+ 12:{a:["交換","こうかん"],e:"創造し、伝え、届け、交換する。"},
+ 13:{a:["ポジショニング"],e:"4Pの組み合わせは、ポジショニングを実現するためのもの。"},
+ 14:{a:["マーケティング・ミックス","マーケティングミックス","4P"],e:"製品・価格・流通・プロモーションの組み合わせ。"},
+ 15:{a:["Place","プレイス","流通"],e:"日本語では流通。"},
+ 16:{a:["内的","ないてき"],e:"内的一貫性＝4Pの内側同士が整合している。"},
+ 17:{a:["外的","がいてき"],e:"外的一貫性＝4Pと外の市場環境が整合している。"},
+ 18:{a:["Targeting","ターゲティング"],e:"標的市場の選定。"},
+ 19:{a:["セグメント"],e:"市場セグメント。分けることがセグメンテーション。"},
+ 20:{a:["競合他社","競合","競争相手","きょうごうたしゃ"],e:"ターゲティングで考える3つ：自社資源・市場動向・競合他社。"},
+ 21:{a:["価格","かかく"],e:"差別化できないと、消費者は価格だけで選ぶ。"},
+ 22:{a:["満足","まんぞく"],e:"顧客満足型＝今いる顧客の満足を高める。事例はキットカット。"},
+ 23:{a:["創造","そうぞう"],e:"顧客創造型＝新しい顧客や価値をつくる。"},
+ 24:{a:["ポジショニング"],e:"外の市場環境から自社の位置を決める。"},
+ 25:{a:["資源","しげん"],e:"内の強み・弱みから、自社資源に合う市場を探す。"},
+ 26:{a:["コンセプト"],e:"製品コンセプト。"},
+ 27:{a:["パイロット"],e:"パイロット・ランを経て大量生産に入る。"},
+ 28:{a:["ニーズ"],e:"ニーズが違えば、評価する属性も違う。"},
+ 29:{a:["便益","べんえき"],e:"便益の束＝製品の価値は多元的。"},
+ 30:{a:["マーケティング・ミックス","マーケティングミックス","4P"],e:"成熟期の3つの修正：市場・製品・マーケティング・ミックス。"},
+ 31:{a:["共創","きょうそう"],e:"価値共創。ユーザーは価値を共に創るパートナー。"},
+ 32:{a:["ユーザー","ユーザ"],e:"産業財や、スポーツ・趣味の消費財に多い。"},
+ 33:{a:["粘着","ねんちゃく"],e:"ニーズの情報はユーザー側にあって、生まれた場所から動かしにくい。"},
+ 34:{a:["リードユーザー","リードユーザ"],e:"①市場動向に先行 ②解決策から高い効用を得る。"},
+ 35:{a:["コスト","費用"],e:"価格を決める3要素：競合・コスト・マーケティング戦略。"},
+ 36:{a:["オープン"],e:"メーカーが目安を示すのは希望小売価格（2段階建値制）。"},
+ 37:{a:["補完","ほかん"],e:"プリンター本体とインクが典型例。"},
+ 38:{a:["ゾーン"],e:"観光地の自販機など。"},
+ 39:{a:["コストプラス"],e:"コスト志向型。主にメーカーが使う。"},
+ 40:{a:["マークアップ"],e:"コスト志向型。卸・小売が使う。"},
+ 41:{a:["端数","はすう"],e:"需要（消費者）志向型。"},
+ 42:{a:["慣習","かんしゅう"],e:"需要志向型。長く同じ値段を保つ維持戦略。"},
+ 43:{a:["威光","いこう"],e:"需要志向型。高いことが品質や格の印になる。"},
+ 44:{a:["実勢","じっせい"],e:"競争志向型。下位企業が使う。"},
+ 45:{a:["留保","りゅうほ"],e:"買い手なら上限、売り手なら売ってもよい下限。"},
+ 46:{a:["外的","がいてき"],e:"店頭表示やチラシなど購買環境から。"},
+ 47:{a:["内的","ないてき"],e:"「いつもこのくらい」という過去の購買経験から。"},
+ 48:{a:["バロメータ","バロメーター"],e:"高いほど品質がよさそうに見える。"},
+ 49:{a:["プレステージ"],e:"高級品を持つことが自分を示す。"},
+ 50:{a:["マーケティング・チャネル","マーケティングチャネル","チャネル"],e:"一般的な順路（メーカー→卸→小売）は「流通経路」。"},
+ 51:{a:["構築","こうちく","選択"],e:"チャネル構築（選択）。"},
+ 52:{a:["管理","かんり"],e:"選んだ後に、意図どおりの協調を得るための管理。"},
+ 53:{a:["物流","ぶつりゅう"],e:"モノが動く。"},
+ 54:{a:["商流","しょうりゅう"],e:"所有権が動く（売買取引）。"},
+ 55:{a:["情報流","じょうほうりゅう"],e:"商流・物流を円滑にする情報の伝達。"},
+ 56:{a:["時間","じかん"],e:"時間・空間の分離（順不同）。"},
+ 57:{a:["空間","くうかん"],e:"時間・空間の分離（順不同）。"},
+ 58:{a:["在庫","ざいこ","保管"],e:"輸送＝運ぶ、在庫＝保管する。"},
+ 59:{a:["所有権","しょゆうけん"],e:"商流は所有権の移転。"},
+ 60:{a:["危険","きけん","リスク"],e:"売れ残りなど、財を持つことから生じる危険。"},
+ 61:{a:["以外","いがい"],e:"卸売業＝消費者以外に販売、小売業＝消費者に販売。"},
+ 62:{a:["小規模分散","しょうきぼぶんさん"],e:"生産は1か所に集められるが、消費者は全国に散らばる。"},
+ 63:{a:["リスク","危険"],e:"全国に店を出す資金とリスクを流通業者に担ってもらう。"},
+ 64:{a:["品揃え","品ぞろえ","しなぞろえ"],e:"いろいろな会社の製品を比べられる店。"},
+ 65:{a:["取引数節約","取引数の節約","とりひきすうせつやく"],e:"4社×6人＝24回 → 4＋6＝10回。"},
+ 66:{a:["オムニチャネル"],e:"近藤（2018）の定義。"},
+ 67:{a:["モチベーション"],e:"アメ。報酬で協力を引き出す。"},
+ 68:{a:["統制","とうせい"],e:"ムチ。締め付けで従わせる。"},
+ 69:{a:["制裁","せいさい"],e:"出荷制限、取引の縮小・断絶など。"},
+ 70:{a:["一体感","いったいかん"],e:"共感や帰属意識。系列店など。"}
+};
+const UNORDERED = [[22, 23], [56, 57]];
+
+const ESSAY = [
+ {c:1,t:"顧客創造とマイオピア",p:"マーケティングにおける「顧客創造」とは何か。マーケティング・マイオピアという言葉を使って説明せよ。",
+  kw:[["顧客創造","顧客を創造"],["ドラッカー"],["ニーズ"],["ウォンツ"],["マイオピア","近視眼"],["レビット"],["価値"],["性能"],["差別化","価格競争","追いつかれ"]],
+  m:"ドラッカーはマーケティングの役割を顧客を創造することだとした。顧客創造とは、今いる顧客の表面的な要望（ウォンツ）に応えるだけでなく、社会でまだ満たされていないニーズを見つけて満たし、「こんな商品が欲しかった」という売れる理由をつくることである。これに対し、自社がどんな製品をどう売るかしか見ていない状態を、レビットはマーケティング・マイオピア（近視眼）と呼んだ。マイオピアに陥ると業界の発想にとらわれ、差別化しにくく、すぐ追いつかれ、価格競争に陥る。たとえば「ドリルを買う人が欲しいのはドリルではなく穴である」ように、製品の性能ではなく顧客にとっての価値から考えれば、別の方法で穴をあける商品も発想できる。消費者は性能ではなく価値にお金を払うので、顧客の本当のニーズから考えることが顧客創造につながる。"},
+ {c:2,t:"4PとSTP",p:"マーケティング・ミックス（4P）とSTPを説明し、両者の関係を述べよ。",
+  kw:[["セグメンテーション","市場細分化"],["ターゲティング"],["ポジショニング"],["4P","製品・価格・流通・プロモーション","製品、価格、流通、プロモーション"],["内的一貫性","内的"],["外的一貫性","外的"],["差別化"],["顧客創造","新しい価値","新しい顧客"]],
+  m:"STPは、市場を似た特徴の消費者の集まりに分け（セグメンテーション）、自社資源・市場動向・競合を考えて狙う市場を選び（ターゲティング）、競合と比べてどんな価値で差別化するかを決める（ポジショニング）手順である。マーケティング・ミックスは、製品・価格・流通・プロモーションの4Pを組み合わせ、目指すポジショニングを実現する統合的な活動である。つまりSTPで「誰に、どんな価値を」を決め、4Pで「どのように届けるか」を決める。このとき4P同士が整合していること（内的一貫性）と、4Pと市場環境が整合していること（外的一貫性）が必要である。たとえば高級志向の層に高品質の商品をテレビCMで訴えても、価格を極端に安くしディスカウントストアで売れば内的一貫性が崩れる。既存の製品でも4PやSTPを見直せば、新しい価値と顧客を生み出せる（キットカットの事例）。"},
+ {c:3,t:"ユーザーと価値共創",p:"製品の価値はどこで生まれるか。ユーザーイノベーションと価値共創の考え方から説明せよ。",
+  kw:[["ニーズ"],["便益の束","便益"],["多元的"],["価値共創","共創"],["ユーザーイノベーション"],["粘着"],["リードユーザー"],["組織"]],
+  m:"製品の価値は製品自体に内在するのではなく、ユーザーのニーズと対応してはじめて実現する。ニーズが違えば評価する属性も違うため、製品の価値は多元的な「便益の束」である。そのためユーザーは使い方を通じて新しい価値を見出すことがあり、企業以外のステークホルダーと協働して価値をつくる価値共創のパートナーになる。情報の粘着性仮説によれば、ニーズや利用状況の情報はユーザー側にあって移しにくいため、ユーザー自身が解決策をつくるユーザーイノベーションが起きる（例：自転車好きの改造から生まれたマウンテンバイク）。ただし消費者が生んだ価値は消費者のものであり、企業が活かすには、リードユーザーとの対話を通じて新しいノウハウや組織プロセスを取り入れ、組織能力を再構築する必要がある。"},
+ {c:4,t:"価格の決め方",p:"価格設定の3つの考え方を説明し、企業が価格を戦略的に「決める」とはどういうことか述べよ。",
+  kw:[["コスト志向"],["需要志向","消費者志向"],["競争志向"],["コストプラス","マークアップ"],["端数","慣習","威光"],["実勢"],["決める"],["補完","ゾーン","定額"],["品質のバロメータ","バロメーター","バロメータ"]],
+  m:"価格設定には3つの考え方がある。コスト志向型は、コストに利益を加えて決める方法で、コストプラス法やマークアップ法がある。需要志向型は、消費者の感じ方から決める方法で、端数価格（980円など）、慣習価格、威光価格がある。競争志向型は、競合の価格から決める方法で、プライスリーダーに合わせる実勢価格法などがある。コスト志向型だけでは消費者視点と競争視点が抜けてしまう。価格は市場で自然に「決まる」のではなく、企業が競合との関係・コスト・マーケティング戦略を考えて「決める」ものである。たとえばプリンター本体を安くしインクで利益を得る補完的価格設定のように、価格は他の3Pと組み合わせて設計される。消費者にとって価格は支出の痛みであると同時に品質のバロメータでもあるため、価格の決め方しだいで新しい顧客を創造できる。"},
+ {c:5,t:"流通業者の存立根拠",star:true,p:"メーカーにとって直販の方がコントロールしやすいのに、流通業者を使うのはなぜか。流通業者の存立根拠を用いて説明せよ。",
+  kw:[["コントロール","販売データ","陳列","利益が渡る"],["小規模分散"],["資金"],["リスク"],["素早い展開","素早く"],["社会的品揃え","品揃え","品ぞろえ"],["取引数節約","取引数"]],
+  m:"メーカーが流通業者を使うと、店頭での販売価格や販売方法をコントロールできない、販売データを集められない、思い通りの陳列ができない、利益の一部が流通業者に渡る、というデメリットがある。それでも流通業者が存在するのは、次の理由による。第一に、生産は特定の場所に集められるが消費者は全国に散らばっているため、卸売業者と小売業者のネットワークを使えば効率よく届けられる（消費の小規模分散性への対応）。第二に、全国に店を出すには資金とリスクを伴うが、それを流通業者に負担してもらえる（資金調達とリスク負担軽減）。第三に、既存店舗で扱ってもらえば早く消費者に届けられる（素早い展開）。第四に、消費者はいろいろな会社の製品を比べられる店を好む（社会的品揃え）。第五に、流通業者が間に入ると総取引数が減る（取引数節約の原理）。たとえばメーカー4社と消費者6人なら、直接取引では24回、卸1社を通せば10回ですむ。このようにデメリットを上回る利点があるため、メーカーはすべてを直販にせず流通業者を使う。"},
+ {c:5,t:"チャネル管理とパワー基盤",p:"メーカーは流通業者からどのように協調を得るか。チャネル管理とパワー基盤の考え方を用いて説明せよ。",
+  kw:[["モチベーション"],["統制"],["コンフリクト","対立"],["報酬"],["制裁"],["情報","専門性"],["一体感"],["正統","正当"]],
+  m:"チャネルを選んだメーカーは、次に意図したとおりの協調を得るためにチャネルを管理する。方法には、報酬やリベートなどの優遇措置を与えるモチベーションと、インセンティブの削減や出荷禁止などの統制がある。メーカーと流通業者の間では、目的・役割や事実認識の不一致、資源の差、コミュニケーションの混乱などからコンフリクトが起こる。メーカーが影響力を持つ根拠は5つのパワー基盤である。報酬（リベート、取引拡大、排他的販売権）、制裁（出荷制限、取引の縮小・断絶）、情報・専門性（重要な専門知識や情報処理能力）、一体感（共感や帰属意識。系列店など）、正統性（影響される義務があると思わせる。創業者への恩など）である。制裁は対立を生みやすいので、報酬や情報・専門性、一体感を組み合わせて協調を得ることが大切である。"}
+];
+
+/* ---------- helpers ---------- */
+const $ = (s) => document.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+function circ(n) {
+  if (n <= 20) return String.fromCharCode(0x245F + n);
+  if (n <= 35) return String.fromCharCode(0x3250 + n - 20);
+  if (n <= 50) return String.fromCharCode(0x32B0 + n - 35);
+  return "(" + n + ")";
+}
+function norm(s) {
+  s = (s || "").normalize("NFKC").toLowerCase();
+  s = s.replace(/[\s・･·\-‐ー－_「」『』（）()。、,.]/g, (ch) => ch === "ー" ? "ー" : "");
+  s = s.replace(/[ぁ-ゖ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+  return s;
+}
+function same(input, id) { const n = norm(input); return n !== "" && A[id].a.some((x) => norm(x) === n); }
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+/* ---------- 穴埋め ---------- */
+let graded = false;
+let results = {};   // id -> true/false
+let overridden = {};
+let visibleIds = [];
+let order = Q.map((_, i) => i);
+let retryOnly = null; // Set of question indices
+
+function blankIds(q) { const r = []; q.t.replace(/\[\[(\d+)\]\]/g, (_, n) => { r.push(+n); return _; }); return r; }
+
+function renderSheet() {
+  const sel = $("#chSel").value;
+  const wrongPrev = new Set(store.get("mkt-wrong", []));
+  let idx = order.filter((i) => {
+    const q = Q[i];
+    if (retryOnly) return retryOnly.has(i);
+    if (sel === "all") return true;
+    if (sel === "wrong") return blankIds(q).some((id) => wrongPrev.has(id));
+    return String(q.c) === sel;
+  });
+  const sheet = $("#sheet");
+  visibleIds = [];
+  if (!idx.length) {
+    sheet.innerHTML = '<div class="empty-note">' + (sel === "wrong" ? "前回まちがえた問題はありません。まず「第1〜5回すべて」で答え合わせをしてみてください。" : "問題がありません。") + "</div>";
+    return;
+  }
+  const shuffled = $("#shuf").checked;
+  let html = "", lastC = null, n = 0;
+  idx.forEach((i) => {
+    const q = Q[i];
+    if (!shuffled && q.c !== lastC) {
+      if (lastC !== null) html += "</div>";
+      html += '<div class="chapter"><h2>' + esc(CHN[q.c]) + "</h2>";
+      lastC = q.c;
+    }
+    n++;
+    const body = esc(q.t).replace(/\[\[(\d+)(:r)?\]\]/g, (_, id, r) => {
+      id = +id;
+      if (r) return '<span class="ref">（' + circ(id) + "）</span>";
+      visibleIds.push(id);
+      const len = Math.max(...A[id].a.map((x) => x.length));
+      const w = Math.min(Math.max(len * 1.15 + 1.6, 4.5), 15);
+      const saved = store.get("mkt-in-" + id, "");
+      return '<span class="blank" id="bl' + id + '"><span class="bno">' + circ(id) + '</span><input id="in' + id + '" data-id="' + id + '" style="width:' + w + 'em" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="空欄' + id + '" value="' + esc(saved) + '"><span class="mark" aria-hidden="true"></span></span>';
+    });
+    html += '<div class="q" data-q="' + i + '"><div class="qno">' + (shuffled ? n : (i + 1)) + '</div><div class="qtext">' + body + (shuffled ? ' <span class="ref">［第' + q.c + '回］</span>' : "") + '</div><div class="explain" id="ex' + i + '" hidden></div></div>';
+  });
+  if (!shuffled) html += "</div>";
+  sheet.innerHTML = html;
+  sheet.querySelectorAll("input").forEach((el) => {
+    el.addEventListener("input", () => { store.set("mkt-in-" + el.dataset.id, el.value); });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const all = [...sheet.querySelectorAll("input")];
+        const k = all.indexOf(el);
+        if (k < all.length - 1) all[k + 1].focus(); else check();
+      }
+    });
+  });
+  if (graded) check(true);
+}
+
+function check(silent) {
+  graded = true;
+  results = {};
+  const val = (id) => { const el = $("#in" + id); return el ? el.value : ""; };
+  const handled = new Set();
+  UNORDERED.forEach((grp) => {
+    if (!grp.every((id) => visibleIds.includes(id))) return;
+    const pool = grp.map((id) => A[id].a.map(norm));
+    const used = new Set();
+    grp.forEach((id) => {
+      const n = norm(val(id));
+      let hit = -1;
+      pool.forEach((alts, k) => { if (hit < 0 && !used.has(k) && n && alts.includes(n)) hit = k; });
+      if (hit >= 0) used.add(hit);
+      results[id] = hit >= 0;
+      handled.add(id);
+    });
+  });
+  visibleIds.forEach((id) => { if (!handled.has(id)) results[id] = same(val(id), id); });
+  Object.keys(overridden).forEach((id) => { if (id in results && overridden[id]) results[id] = true; });
+  paint();
+  const wrong = new Set(store.get("mkt-wrong", []));
+  visibleIds.forEach((id) => { if (results[id]) wrong.delete(id); else wrong.add(id); });
+  store.set("mkt-wrong", [...wrong]);
+  if (!silent) { const first = document.querySelector(".blank.ng input"); if (first) first.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+}
+
+function paint() {
+  visibleIds.forEach((id) => {
+    const bl = $("#bl" + id); if (!bl) return;
+    const ok = results[id];
+    const empty = !norm($("#in" + id).value);
+    bl.classList.toggle("ok", ok); bl.classList.toggle("ng", !ok); bl.classList.toggle("empty", !ok && empty);
+    bl.querySelector(".mark").textContent = ok ? "○" : "✕";
+  });
+  document.querySelectorAll(".q").forEach((qel) => {
+    const i = +qel.dataset.q;
+    const ex = $("#ex" + i);
+    const ids = blankIds(Q[i]);
+    ex.innerHTML = ids.map((id) => {
+      const ok = results[id];
+      const yours = $("#in" + id).value.trim();
+      return '<div class="ex ' + (ok ? "ok" : "ng") + '"><b>' + circ(id) + " " + esc(A[id].a[0]) + "</b>" +
+        (!ok ? '<span class="fix">' + (yours ? "あなた：" + esc(yours) : "未記入") + "</span>" : "") +
+        '<span class="why">' + esc(A[id].e) + "</span>" +
+        (!ok && yours ? '<button class="btn small" data-ov="' + id + '">正解にする</button>' : "") + "</div>";
+    }).join("");
+    ex.hidden = false;
+  });
+  document.querySelectorAll("[data-ov]").forEach((b) => b.addEventListener("click", () => {
+    const id = +b.dataset.ov; overridden[id] = true; results[id] = true;
+    const wrong = new Set(store.get("mkt-wrong", [])); wrong.delete(id); store.set("mkt-wrong", [...wrong]);
+    paint();
+  }));
+  const total = visibleIds.length, ok = visibleIds.filter((id) => results[id]).length;
+  const sc = $("#score");
+  sc.classList.remove("idle");
+  sc.innerHTML = ok + "<small> / " + total + "</small>";
+  const by = {};
+  visibleIds.forEach((id) => {
+    const qi = Q.findIndex((q) => blankIds(q).includes(id)); const c = Q[qi].c;
+    by[c] = by[c] || [0, 0]; by[c][1]++; if (results[id]) by[c][0]++;
+  });
+  $("#chips").innerHTML = Object.keys(by).map((c) => '<span class="chip' + (by[c][0] === by[c][1] ? " full" : "") + '">第' + c + "回 " + by[c][0] + "/" + by[c][1] + "</span>").join("");
+  $("#btnRetry").hidden = ok === total;
+}
+
+function resetGrade() {
+  graded = false; results = {}; overridden = {};
+  const sc = $("#score"); sc.className = "score idle"; sc.textContent = "未採点";
+  $("#chips").innerHTML = ""; $("#btnRetry").hidden = true;
+}
+
+$("#btnCheck").addEventListener("click", () => check(false));
+$("#btnClear").addEventListener("click", () => {
+  visibleIds.forEach((id) => store.set("mkt-in-" + id, ""));
+  retryOnly = null; resetGrade(); renderSheet();
+});
+$("#btnRetry").addEventListener("click", () => {
+  const wrongIds = visibleIds.filter((id) => !results[id]);
+  retryOnly = new Set(Q.map((q, i) => i).filter((i) => blankIds(Q[i]).some((id) => wrongIds.includes(id))));
+  wrongIds.forEach((id) => store.set("mkt-in-" + id, ""));
+  resetGrade(); renderSheet();
+  const f = document.querySelector("#sheet input"); if (f) f.focus();
+});
+$("#chSel").addEventListener("change", () => { retryOnly = null; resetGrade(); renderSheet(); });
+$("#shuf").addEventListener("change", () => {
+  order = Q.map((_, i) => i);
+  if ($("#shuf").checked) for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  resetGrade(); renderSheet();
+});
+
+/* ---------- 論述 ---------- */
+let cur = 4;
+let sample = null;
+let ctl = null;
+
+function renderQlist() {
+  $("#qlist").innerHTML = ESSAY.map((e, i) =>
+    '<button class="qcard" data-e="' + i + '" aria-pressed="' + (i === cur) + '"><span class="k">予想' + (i + 1) + "・第" + e.c + "回" + (e.star ? ' <span class="star">★出やすい</span>' : "") + "</span><span>" + esc(e.t) + "</span></button>").join("");
+  document.querySelectorAll("[data-e]").forEach((b) => b.addEventListener("click", () => { cur = +b.dataset.e; store.set("mkt-ecur", cur); loadEssay(); }));
+}
+function loadEssay() {
+  if (ctl) ctl.abort();
+  const e = ESSAY[cur];
+  renderQlist();
+  $("#eTag").textContent = "予想" + (cur + 1) + "　" + CHN[e.c];
+  $("#ePrompt").textContent = "問：" + e.p;
+  $("#eText").value = store.get("mkt-essay-" + cur, "");
+  $("#eModelText").textContent = e.m;
+  $("#eModel").open = false;
+  $("#kwBox").hidden = true; $("#aiBox").hidden = true; $("#aiBox").innerHTML = "";
+  count();
+}
+function count() { $("#eCount").textContent = [...$("#eText").value.replace(/\s/g, "")].length + "字"; }
+$("#eText").addEventListener("input", () => { store.set("mkt-essay-" + cur, $("#eText").value); count(); });
+
+$("#btnKw").addEventListener("click", () => {
+  const txt = norm($("#eText").value);
+  const kws = ESSAY[cur].kw;
+  let hit = 0;
+  $("#kwList").innerHTML = kws.map((alts) => {
+    const ok = alts.some((a) => txt.includes(norm(a)));
+    if (ok) hit++;
+    return '<span class="kwi ' + (ok ? "hit" : "miss") + '">' + (ok ? "○ " : "") + esc(alts[0]) + "</span>";
+  }).join("");
+  $("#kwScore").textContent = hit + " / " + kws.length;
+  $("#kwBox").hidden = false;
+});
+
+const ERR = {
+  not_granted: "Claudeの利用が許可されなかったので、採点できません。キーワード確認と解答例は使えます。",
+  sampling_disabled: "このアカウントではClaudeを使った採点ができません。",
+  rate_limited: "続けて使いすぎたため、少し時間をおいてからもう一度押してください。",
+  session_expired: "サインインし直してから、もう一度押してください。",
+  refused: "この答案は採点できませんでした。内容を見直してもう一度押してください。",
+  invalid_json: "採点結果をうまく読み取れませんでした。もう一度押してください。"
+};
+function aiPrompt(e, ans) {
+  return [
+    "あなたは大学の「マーケティング」の授業の採点者です。学生の論述答案を10点満点で採点してください。",
+    "評価の基準は3つです：(1)授業の理論・概念を正しく理解しているか (2)自分の言葉で説明できているか (3)説明が論理的か。",
+    "授業の範囲と用語は、下の「解答例」と「押さえたいキーワード」に合わせてください。解答例と同じ言い回しである必要はありません。具体例が授業と違っていても、筋が通っていれば評価してください。",
+    "", "【問題】" + e.p,
+    "", "【解答例】" + e.m,
+    "", "【押さえたいキーワード】" + e.kw.map((k) => k[0]).join("、"),
+    "", "【学生の答案】", ans,
+    "", "次の形のJSONだけで答えてください。文章はすべて日本語で、学生に直接話しかけるやさしい言葉で書いてください。",
+    '{"score": 0〜10の整数, "verdict": "ひとことの評価（15字以内）", "good": ["よかった点", ...最大3つ], "missing": ["足りない点や間違い", ...最大4つ], "advice": "次に書き直すときに一番効く助言を1〜2文"}'
+  ].join("\n");
+}
+$("#btnAi").addEventListener("click", async () => {
+  const ans = $("#eText").value.trim();
+  const box = $("#aiBox");
+  box.hidden = false;
+  if ([...ans.replace(/\s/g, "")].length < 40) { box.innerHTML = '<p class="status">もう少し書いてから採点してもらいましょう（40字以上）。</p>'; return; }
+  if (!sample) return;
+  ctl = new AbortController();
+  $("#btnAi").disabled = true; $("#btnStop").hidden = false;
+  box.innerHTML = '<p class="status">採点しています…（30秒ほどかかることがあります）</p>';
+  try {
+    const r = await sample.json(aiPrompt(ESSAY[cur], ans), { signal: ctl.signal });
+    const sc = Math.max(0, Math.min(10, Math.round(Number(r && r.score) || 0)));
+    const li = (arr) => (Array.isArray(arr) ? arr : []).slice(0, 4).map((x) => "<li>" + esc(x) + "</li>").join("");
+    box.innerHTML =
+      '<div class="grade"><span class="big">' + sc + '<small style="font-size:20px"> / 10</small></span><span class="verdict">' + esc((r && r.verdict) || "") + "</span></div>" +
+      (r && r.good && r.good.length ? "<h3>よかった点</h3><ul>" + li(r.good) + "</ul>" : "") +
+      (r && r.missing && r.missing.length ? "<h3>足りない点</h3><ul>" + li(r.missing) + "</ul>" : "") +
+      (r && r.advice ? "<h3>書き直しのヒント</h3><p style=\"margin:0;line-height:1.8\">" + esc(r.advice) + "</p>" : "") +
+      '<p class="note">Claudeによる目安の採点です。実際の採点基準とは違うことがあります。</p>';
+  } catch (err) {
+    if (err && err.code === "cancelled") { box.innerHTML = '<p class="status">採点を止めました。</p>'; }
+    else {
+      box.innerHTML = '<p class="status">' + esc(ERR[err && err.code] || "採点に失敗しました。少し待ってからもう一度押してください。") + "</p>";
+      if (err && (err.code === "not_granted" || err.code === "sampling_disabled")) $("#btnAi").hidden = true;
+    }
+  } finally {
+    $("#btnAi").disabled = false; $("#btnStop").hidden = true; ctl = null;
+  }
+});
+$("#btnStop").addEventListener("click", () => { if (ctl) ctl.abort(); });
+
+/* ---------- tabs ---------- */
+function show(view) {
+  const fill = view !== "essay";
+  $("#tab-fill").setAttribute("aria-selected", fill); $("#tab-essay").setAttribute("aria-selected", !fill);
+  $("#view-fill").hidden = !fill; $("#view-essay").hidden = fill;
+}
+$("#tab-fill").addEventListener("click", () => { location.hash = "fill"; show("fill"); });
+$("#tab-essay").addEventListener("click", () => { location.hash = "essay"; show("essay"); });
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+
+/* ---------- start ---------- */
+cur = store.get("mkt-ecur", 4);
+if (!(cur >= 0 && cur < ESSAY.length)) cur = 4;
+renderSheet();
+loadEssay();
+show(location.hash.slice(1));
+if (window.claude && typeof window.claude.use === "function") {
+  window.claude.use("sample").then((s) => { sample = s; $("#btnAi").hidden = !s; }).catch(() => {});
+}
+})();
+</script>
+
+</body>
+</html>
