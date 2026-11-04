@@ -6,96 +6,40 @@
 <title>マーケティング小テスト演習</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700&family=Yomogi&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<style>
-/* Layout: 答案用紙の表紙 — title block, then two practice sheets side by side (stacked on phones) */
-:root {
-  --paper: #f6f7f4;
-  --sheet: #ffffff;
-  --ink: #1d2433;
-  --ink-soft: #5b6375;
-  --rule: #d9dde3;
-  --rule-soft: #eceef1;
-  --accent: #23407a;
-  --pen: #d23a2a;
-  --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
-  --font-pen: "Yomogi", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
-    --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --pen: #ff7b6b;
-    color-scheme: dark;
-  }
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; }
-body {
-  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.8;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 760px; margin: 0 auto; padding-block: 48px 64px; display: flex; flex-direction: column; gap: 28px; }
-header { display: flex; flex-direction: column; gap: 8px; border-bottom: 2px solid var(--ink); padding-bottom: 20px; }
-.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); }
-h1 { font-family: var(--font-display); font-size: clamp(30px, 6vw, 42px); line-height: 1.25; margin: 0; text-wrap: balance; }
-.lead { margin: 0; color: var(--ink-soft); font-size: 15px; line-height: 1.8; max-width: 38em; }
-.info { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-soft); }
-.info b { color: var(--ink); font-weight: 700; }
-
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.card { display: flex; flex-direction: column; gap: 12px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px;
-  padding: 22px 22px 20px; color: inherit; text-decoration: none; min-width: 0; position: relative; }
-.card:hover { border-color: var(--ink-soft); }
-.card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.card .kind { font-size: 12px; letter-spacing: .1em; color: var(--ink-soft); }
-.card h2 { font-family: var(--font-display); font-size: 24px; line-height: 1.35; margin: 0; }
-.card p { margin: 0; font-size: 14px; line-height: 1.75; color: var(--ink-soft); }
-.card ul { margin: 0; padding-left: 1.2em; font-size: 14px; line-height: 1.8; }
-.count { font-family: var(--font-pen); color: var(--pen); font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
-.count small { font-size: 16px; }
-.go { margin-top: auto; align-self: flex-start; font-weight: 700; font-size: 14px; color: var(--accent); padding-top: 6px; }
-.status { font-size: 13px; color: var(--pen); font-family: var(--font-pen); }
-
-.range { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px 22px; display: flex; flex-direction: column; gap: 8px; }
-.range h3 { margin: 0; font-size: 14px; letter-spacing: .06em; }
-.range ol { margin: 0; padding-left: 1.6em; font-size: 14px; line-height: 1.9; columns: 2 220px; column-gap: 24px; }
-.range .out { color: var(--ink-soft); font-size: 13px; margin: 0; }
-footer { font-size: 12px; color: var(--ink-soft); line-height: 1.7; border-top: 1px solid var(--rule); padding-top: 14px; }
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="dads.css">
 </head>
-<body>
+<body class="home">
 <div class="wrap">
   <header>
-    <div class="eyebrow">火2 マーケティング　小テスト対策</div>
+    <div class="eyebrow">火曜2限 マーケティング／小テスト対策</div>
     <h1>マーケティング小テスト演習</h1>
-    <p class="lead">第1〜5回の内容を、穴埋め・論述と4択の2つの形で練習できます。どちらも答えるとその場で採点し、まちがえた問題だけ解き直せます。</p>
-    <div class="info"><span>範囲 <b>第1〜5回（第5章まで）</b></span><span>形式 <b>穴埋め＋論述1題</b></span><span>持ち込み <b>不可</b></span></div>
+    <p class="lead">第1〜5回の内容を、穴埋め・論述と4択の2つの形で練習できます。どちらも答えるとすぐに採点され、まちがえた問題だけを解き直せます。</p>
+    <div class="info"><span>範囲：<b>第1〜5回</b></span><span>形式：<b>穴埋め＋論述1題</b></span><span>持ち込み：<b>不可</b></span></div>
   </header>
 
+  <h2>練習を選ぶ</h2>
   <div class="cards">
     <a class="card" href="fill.html">
-      <span class="kind">本番の形式</span>
+      <span class="kind">小テストと同じ形式</span>
       <h2>穴埋め・論述</h2>
-      <span class="count">70<small> か所 ＋ 論述6問</small></span>
-      <p>空欄に入力して「答え合わせ」を押すと、赤ペンで○✕と解説が出ます。論述はキーワードが入っているかを確認できます。</p>
+      <span class="count">70<small>か所 ＋ 論述6問</small></span>
+      <p>空欄に入力して「答え合わせ」を押すと、正解・不正解と解説が表示されます。論述は、押さえたいキーワードが入っているかを確認できます。</p>
       <span class="status" id="stFill" hidden></span>
-      <span class="go">解きはじめる →</span>
+      <span class="go">穴埋め・論述を始める</span>
     </a>
     <a class="card" href="choice.html">
-      <span class="kind">用語の確認・ウォーミングアップ</span>
+      <span class="kind">用語の確認</span>
       <h2>4択問題</h2>
-      <span class="count">53<small> 問</small></span>
-      <p>選ぶとその場で○✕と解説が出ます。例があてはまる用語を選ぶ問題や、価格・取引数の計算問題も入っています。</p>
+      <span class="count">53<small>問</small></span>
+      <p>選ぶとすぐに正解・不正解と解説が表示されます。例があてはまる用語を選ぶ問題や、価格・取引数の計算問題も入っています。</p>
       <span class="status" id="stChoice" hidden></span>
-      <span class="go">解きはじめる →</span>
+      <span class="go">4択問題を始める</span>
     </a>
   </div>
 
-  <section class="range">
-    <h3>範囲</h3>
+  <section class="notice" aria-labelledby="rangeTitle">
+    <h3 id="rangeTitle">小テストの範囲</h3>
     <ol>
       <li>マーケティング発想法</li>
       <li>マーケティング・ミックスによる顧客創造</li>
@@ -103,10 +47,10 @@ footer { font-size: 12px; color: var(--ink-soft); line-height: 1.7; border-top: 
       <li>価格による顧客創造</li>
       <li>チャネルによる顧客創造</li>
     </ol>
-    <p class="out">第6回（コミュニケーション）は小テストの範囲外です。</p>
+    <p class="note">第6回（コミュニケーション）は範囲外です。おすすめの順番は、4択で用語を確認 → 穴埋めで本番の形に慣れる → 論述を1問書く、です。</p>
   </section>
 
-  <footer>おすすめの順番：4択で用語を確認 → 穴埋めで本番の形に慣れる → 論述を1問書く。入力した答えと「前回まちがえた問題」は、このブラウザに保存されます。授業の配布資料はネット上での共有が禁止されているので、このページは公開しないでください。</footer>
+  <footer>入力した答えと「前回まちがえた問題」は、このブラウザに保存されます。授業の配布資料はネット上での共有が禁止されているため、このページは公開しないでください。</footer>
 </div>
 <script>
 (function () {

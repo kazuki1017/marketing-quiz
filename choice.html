@@ -4,127 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 </head>
-<body>
+<body class="choice">
 <title>マーケティング選択問題</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700&family=Yomogi&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-<style>
-/* Layout: 答案用紙 — one column of questions; choices are tappable rows, graded in red pen the moment you pick */
-:root {
-  --paper: #f6f7f4;
-  --sheet: #ffffff;
-  --ink: #1d2433;
-  --ink-soft: #5b6375;
-  --rule: #d9dde3;
-  --rule-soft: #eceef1;
-  --accent: #23407a;
-  --accent-ink: #ffffff;
-  --pen: #d23a2a;
-  --ok: #1f7a4d;
-  --ok-bg: #e7f3ec;
-  --ng-bg: #fbeceb;
-  --field: #f2f4f8;
-  --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
-  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
-  --font-pen: "Yomogi", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
-    --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
-    --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --field: #242936;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #14171d; --sheet: #1c2028; --ink: #e6e8ee; --ink-soft: #a2a9b8;
-  --rule: #333946; --rule-soft: #262b35; --accent: #8fb0f0; --accent-ink: #0f1420;
-  --pen: #ff7b6b; --ok: #6fd3a0; --ok-bg: #18302a; --ng-bg: #3a201f; --field: #242936;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--paper); color: var(--ink); font-family: var(--font-body);
-  font-size: 16px; line-height: 1.8;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
-.wrap { max-width: 760px; margin: 0 auto; padding-block: 28px 80px; display: flex; flex-direction: column; gap: 18px; }
-header { display: flex; flex-direction: column; gap: 6px; }
-.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--ink-soft); }
-h1 { font-family: var(--font-display); font-size: clamp(26px, 5vw, 34px); line-height: 1.3; margin: 0; text-wrap: balance; }
-h2 { font-family: var(--font-display); font-size: 20px; margin: 0; text-wrap: balance; }
-.lead, .note { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
-
-.toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
-.toolbar label { font-size: 13px; color: var(--ink-soft); display: flex; gap: 6px; align-items: center; }
-select { font: 14px var(--font-body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; }
-.btn { appearance: none; font: 700 14px var(--font-body); border-radius: 8px; padding: 9px 16px; cursor: pointer;
-  border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
-.btn:hover { border-color: var(--ink-soft); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-.scorebar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper);
-  padding-block: 10px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
-.score { font-family: var(--font-pen); color: var(--pen); font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
-.score small { font-size: 15px; }
-.progress { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-.bar { flex-basis: 100%; height: 4px; background: var(--rule-soft); border-radius: 2px; overflow: hidden; }
-.bar i { display: block; height: 100%; width: 0; background: var(--accent); }
-.spacer { flex: 1; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-.chip.full { border-color: var(--ok); color: var(--ok); }
-
-.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 20px 12px; }
-.chapter { padding-top: 14px; }
-.chapter + .chapter { border-top: 2px solid var(--ink); margin-top: 10px; }
-.q { padding: 16px 0; border-bottom: 1px dashed var(--rule); display: flex; flex-direction: column; gap: 10px; }
-.chapter .q:last-child { border-bottom: 0; }
-.qhead { display: grid; grid-template-columns: 2.4em 1fr auto; gap: 6px; align-items: start; }
-.qno { font-variant-numeric: tabular-nums; color: var(--ink-soft); font-weight: 700; }
-.qtext { min-width: 0; font-weight: 500; }
-.mark { font-family: var(--font-pen); color: var(--pen); font-size: 30px; line-height: 1; min-width: 1em; text-align: center; }
-.opts { display: grid; gap: 6px; padding-left: 2.4em; }
-.opt { appearance: none; text-align: left; display: grid; grid-template-columns: 1.6em 1fr; gap: 6px; align-items: baseline;
-  font: 15px/1.6 var(--font-body); color: var(--ink); background: var(--field); border: 1px solid transparent; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
-.opt:hover:not([disabled]) { border-color: var(--ink-soft); }
-.opt .k { font-weight: 700; color: var(--ink-soft); }
-.opt[disabled] { cursor: default; }
-.opt.right { background: var(--ok-bg); border-color: var(--ok); }
-.opt.right .k { color: var(--ok); }
-.opt.picked.wrong { background: var(--ng-bg); border-color: var(--pen); }
-.opt.picked.wrong .k { color: var(--pen); }
-.opt.dim { opacity: .55; }
-.explain { margin-left: 2.4em; padding: 8px 12px; border-left: 3px solid var(--rule); background: var(--rule-soft); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; }
-.explain.ng { border-left-color: var(--pen); }
-.explain.ok { border-left-color: var(--ok); }
-.explain b { font-family: var(--font-pen); font-weight: 400; color: var(--pen); font-size: 16px; }
-.explain.ok b { color: var(--ok); }
-.done { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: 18px 20px; background: var(--sheet); border: 2px solid var(--ink); border-radius: 4px; }
-.done .big { font-family: var(--font-pen); color: var(--pen); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
-.empty-note { padding: 24px 0; color: var(--ink-soft); text-align: center; }
-@media (max-width: 480px) {
-  .sheet { padding: 2px 12px 10px; }
-  .opts, .explain { padding-left: 0; margin-left: 0; }
-  .qhead { grid-template-columns: 2em 1fr auto; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .bar i { transition: width .25s; }
-  .mark { transition: transform .15s; }
-  .q.answered .mark { transform: rotate(-8deg); }
-}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="dads.css">
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">火2 マーケティング　小テスト対策　第1〜5回</div>
+    <nav class="crumbs" aria-label="現在地"><a href="index.html">ホーム</a><span aria-hidden="true">›</span><span aria-current="page">4択問題</span></nav>
     <h1>マーケティング選択問題</h1>
-    <p class="lead"><a href="index.html" style="color:var(--accent)">ホーム</a>・<a href="fill.html" style="color:var(--accent)">穴埋め・論述</a>。選択肢を押すと、その場で○✕と解説が出ます。選択肢の並びは毎回入れ替わるので、位置ではなく中身で覚えられます。</p>
+    <p class="lead">選択肢を押すと、その場で○✕と解説が出ます。選択肢の並びは毎回入れ替わるので、位置ではなく中身で覚えられます。</p>
   </header>
 
   <div class="toolbar">
@@ -260,7 +151,7 @@ function render() {
     if (shuf && n === 0) html += '<div class="chapter">';
     const order = shuffle(q.o.map((_, k) => k));
     html += '<div class="q" id="q' + i + '"><div class="qhead"><span class="qno">' + (n + 1) + '</span><span class="qtext">' + esc(q.q) +
-      (shuf ? ' <span class="note" style="display:inline">［第' + q.c + "回］</span>" : "") + '</span><span class="mark" aria-hidden="true"></span></div><div class="opts" role="group" aria-label="選択肢">' +
+      (shuf ? ' <span class="note" style="display:inline">［第' + q.c + "回］</span>" : "") + '</span><span class="mark"></span></div><div class="opts" role="group" aria-label="選択肢">' +
       order.map((k, j) => '<button class="opt" data-q="' + i + '" data-k="' + k + '"><span class="k">' + KANA[j] + "</span><span>" + esc(q.o[k]) + "</span></button>").join("") +
       '</div><div class="explain" hidden></div></div>';
   });
@@ -275,7 +166,7 @@ function pick(btn) {
   const ok = k === 0;
   answers[i] = ok;
   const box = $("#q" + i);
-  box.classList.add("answered");
+  box.classList.add("answered", ok ? "ok" : "ng");
   box.querySelectorAll(".opt").forEach((b) => {
     b.disabled = true;
     const bk = +b.dataset.k;
@@ -283,7 +174,7 @@ function pick(btn) {
     else if (b === btn) b.classList.add("picked", "wrong");
     else b.classList.add("dim");
   });
-  box.querySelector(".mark").textContent = ok ? "○" : "✕";
+  box.querySelector(".mark").textContent = ok ? "正解" : "不正解";
   const ex = box.querySelector(".explain");
   ex.className = "explain " + (ok ? "ok" : "ng");
   ex.innerHTML = "<b>" + (ok ? "正解" : "正解は「" + esc(Q[i].o[0]) + "」") + "</b>　" + esc(Q[i].e);
